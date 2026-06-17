@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier — Yeahvin</title>
+    <meta name="description" content="Votre panier Yeahvin. Finalisez votre commande.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="container header__inner">
+            <a href="index.html" class="logo"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span></a>
+            <nav class="nav" id="nav">
+                <ul class="nav__list">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li><a href="boutique.html" class="nav__link">Boutique</a></li>
+                    <li><a href="panier.html" class="nav__link nav__link--active nav__link--cart">Panier<span class="cart-badge" id="cartBadge">0</span></a></li>
+                    <li><a href="compte.html" class="nav__link">Compte</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="cart section">
+            <div class="container">
+                <h1 class="cart__title">Votre Panier</h1>
+
+                <!-- Panier vide -->
+                <div class="cart-empty" id="cartEmpty" style="display:none;">
+                    <span class="cart-empty__icon">🛒</span>
+                    <h2>Votre panier est vide</h2>
+                    <p>Découvrez nos produits et ajoutez-les à votre panier.</p>
+                    <a href="boutique.html" class="btn btn--primary">Explorer la boutique</a>
+                </div>
+
+                <div class="cart-content" id="cartContent">
+                    <div class="cart-items" id="cartItems"></div>
+                    <div class="cart-summary" id="cartSummary">
+                        <!-- Étape 1 : Résumé -->
+                        <div id="checkoutStep1">
+                            <h3>Récapitulatif</h3>
+                            <div class="cart-summary__line"><span>Sous-total</span><span id="subtotal">0 FCFA</span></div>
+                            <div class="cart-promo">
+                                <input type="text" id="promoCode" class="input" placeholder="Code promo">
+                                <button class="btn btn--ghost" id="applyPromo">Appliquer</button>
+                                <span class="promo-feedback" id="promoFeedback"></span>
+                            </div>
+                            <div class="cart-summary__line cart-summary__line--discount" id="discountLine" style="display:none;"><span>Réduction</span><span id="discount">-0 FCFA</span></div>
+                            <div class="cart-summary__line cart-summary__line--total"><span>Total</span><span id="total">0 FCFA</span></div>
+                            <button class="btn btn--primary btn--full" id="checkoutBtn">Continuer</button>
+                        </div>
+
+                        <!-- Étape 2 : Infos client -->
+                        <div id="checkoutStep2" style="display:none;">
+                            <h3>Vos informations</h3>
+                            <div class="form-group"><label for="customerName">Nom complet *</label><input type="text" id="customerName" class="input" placeholder="Votre nom et prénom" required></div>
+                            <div class="form-group"><label for="customerPhone">Téléphone *</label><div style="display:flex;gap:8px;"><span style="display:flex;align-items:center;padding:10px 14px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-sm);color:var(--text-muted);">+223</span><input type="tel" id="customerPhone" class="input" placeholder="77 55 55 75" required></div></div>
+                            <button class="btn btn--primary btn--full" id="confirmOrderBtn">Confirmer la commande</button>
+                            <button class="btn btn--ghost btn--full" id="backToCartBtn" style="margin-top:8px;">← Retour au panier</button>
+                            <p style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center;">Votre commande sera validée manuellement. Vous recevrez votre lien de téléchargement après validation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span></div>
+                <div class="footer__contact"><h4>Contact</h4><p>WhatsApp : <a href="https://wa.me/22377555575">+223 77 55 55 75</a></p></div>
+            </div>
+            <div class="footer__bottom"><p>&copy; 2026 Yeahvin. Tous droits réservés.</p></div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+    <script src="js/main.js"></script>
+    <script src="js/panier.js"></script>
+</body>
+</html>

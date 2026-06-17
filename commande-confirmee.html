@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande confirmée — Yeahvin</title>
+    <meta name="description" content="Suivi de votre commande Yeahvin.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <style>
+        .order-status { text-align: center; padding: 60px 20px; }
+        .order-status__icon { font-size: 80px; display: block; margin-bottom: 20px; animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+        .order-status__number { font-family: var(--font-heading); font-size: 24px; color: var(--text-white); margin-bottom: 8px; }
+        .order-status__text { color: var(--text-secondary); margin-bottom: 24px; }
+        .order-status__spinner { width: 40px; height: 40px; border: 3px solid var(--border-color); border-top-color: var(--blue-500); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+        @keyframes spin { to{transform:rotate(360deg);} }
+        .download-links { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .download-link-card { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+        .download-link-card__icon { font-size: 32px; }
+        .download-link-card__info { flex: 1; }
+        .download-link-card__name { font-weight: 600; color: var(--text-white); }
+        .download-link-card__btn { background: var(--success); color: white; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; font-size: 13px; font-weight: 500; }
+        .download-link-card__btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="container header__inner">
+            <a href="index.html" class="logo"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span></a>
+            <nav class="nav" id="nav">
+                <ul class="nav__list">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li><a href="boutique.html" class="nav__link">Boutique</a></li>
+                    <li><a href="panier.html" class="nav__link nav__link--cart">Panier<span class="cart-badge" id="cartBadge">0</span></a></li>
+                    <li><a href="compte.html" class="nav__link">Compte</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="order-status section">
+            <div class="container">
+                <span class="order-status__icon">⏳</span>
+                <div class="order-status__number" id="orderNumber">Commande #...</div>
+                <p class="order-status__text" id="orderStatus">En attente de validation...</p>
+                <div class="order-status__spinner" id="orderSpinner"></div>
+                <p style="color:var(--text-muted);font-size:14px;">Vous recevrez votre lien de téléchargement dès validation.</p>
+                <div class="download-links" id="downloadLinks" style="display:none;"></div>
+                <p style="margin-top:16px;"><a href="boutique.html" class="btn btn--ghost">Continuer mes achats</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container"><div class="footer__bottom"><p>&copy; 2026 Yeahvin. Tous droits réservés.</p></div></div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        (function() {
+            var Y = window.Yeahvin;
+            var params = new URLSearchParams(window.location.search);
+            var orderNumber = params.get('order');
+            if (!orderNumber) { document.getElementById('orderStatus').textContent = 'Aucune commande trouvée.'; document.getElementById('orderSpinner').style.display = 'none'; return; }
+            document.getElementById('orderNumber').textContent = 'Commande #' + orderNumber;
+
+            async function checkStatus() {
+                try {
+                    var data = await Y.apiFetch('/api/orders/' + orderNumber + '/status');
+                    if (data.status === 'completed') {
+                        document.getElementById('orderStatus').textContent = '✅ Commande validée !';
+                        document.getElementById('orderSpinner').style.display = 'none';
+                        document.querySelector('.order-status__icon').textContent = '🎉';
+                        document.querySelector('.order-status__icon').style.animation = 'none';
+                        if (data.downloadLinks && data.downloadLinks.length > 0) {
+                            var linksDiv = document.getElementById('downloadLinks');
+                            linksDiv.style.display = 'flex';
+                            linksDiv.innerHTML = '<h3 style="font-family:var(--font-heading);margin-bottom:8px;">📥 Télécharger</h3>';
+                            data.downloadLinks.forEach(function(link) {
+                                linksDiv.innerHTML += '<div class="download-link-card"><div class="download-link-card__icon">📄</div><div class="download-link-card__info"><div class="download-link-card__name">' + link.productName + '</div></div><a href="' + Y.API_BASE + link.downloadUrl + '" class="download-link-card__btn">Télécharger</a></div>';
+                            });
+                        }
+                        return;
+                    }
+                } catch (e) { console.log('Statut en attente...'); }
+                setTimeout(checkStatus, 5000);
+            }
+            checkStatus();
+        })();
+    </script>
+</body>
+</html>

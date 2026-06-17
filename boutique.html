@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique — Yeahvin</title>
+    <meta name="description" content="Parcourez notre collection de produits digitaux et physiques pour geeks.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="container header__inner">
+            <a href="index.html" class="logo"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span></a>
+            <nav class="nav" id="nav">
+                <ul class="nav__list">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li><a href="boutique.html" class="nav__link nav__link--active">Boutique</a></li>
+                    <li><a href="panier.html" class="nav__link nav__link--cart">Panier<span class="cart-badge" id="cartBadge">0</span></a></li>
+                    <li><a href="compte.html" class="nav__link">Compte</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="shop-header"><div class="container"><h1 class="shop-title">Boutique</h1><p class="shop-subtitle">Tous nos produits digitaux & physiques</p></div></div>
+        <section class="shop section">
+            <div class="container">
+                <div class="shop-filters" id="shopFilters">
+                    <div class="filter-search"><input type="text" id="searchInput" placeholder="Rechercher un produit..." class="input"></div>
+                    <div class="filter-categories">
+                        <button class="filter-btn filter-btn--active" data-category="">Tout</button>
+                        <button class="filter-btn" data-category="templates">🎨 Templates</button>
+                        <button class="filter-btn" data-category="ebooks">📚 E-books</button>
+                        <button class="filter-btn" data-category="scripts">🛠️ Scripts</button>
+                        <button class="filter-btn" data-category="goodies">👕 Goodies</button>
+                    </div>
+                    <div class="filter-sort"><select id="sortSelect" class="input"><option value="-createdAt">Plus récents</option><option value="price">Prix croissant</option><option value="-price">Prix décroissant</option><option value="name">Nom A-Z</option></select></div>
+                </div>
+                <div class="products-grid" id="allProducts"><div class="loading-skeleton"></div><div class="loading-skeleton"></div><div class="loading-skeleton"></div><div class="loading-skeleton"></div></div>
+                <div class="pagination" id="pagination"></div>
+                <div class="empty-state" id="emptyState" style="display:none;"><span class="empty-state__icon">🔍</span><h3>Aucun produit trouvé</h3><p>Essayez d'autres filtres.</p></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span><p class="footer__tagline">Produits digitaux & physiques pour geeks passionnés.</p></div>
+                <div class="footer__contact"><h4>Contact</h4><p>WhatsApp : <a href="https://wa.me/22377555575">+223 77 55 55 75</a></p></div>
+            </div>
+            <div class="footer__bottom"><p>&copy; 2026 Yeahvin. Tous droits réservés.</p></div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/boutique.js"></script>
+</body>
+</html>

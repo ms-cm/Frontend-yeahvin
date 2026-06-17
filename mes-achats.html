@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Achats — Yeahvin</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    
+    <style>
+        .purchases-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .purchase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+        
+        .purchase-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .purchase-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        
+        .purchase-card__order {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+        
+        .purchase-card__date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .purchase-card__toggle {
+            font-size: 20px;
+            color: var(--text-muted);
+            transition: transform var(--transition-base);
+        }
+        
+        .purchase-card--open .purchase-card__toggle {
+            transform: rotate(180deg);
+        }
+        
+        .purchase-card__body {
+            display: none;
+            padding: 20px 24px;
+        }
+        
+        .purchase-card--open .purchase-card__body {
+            display: block;
+        }
+        
+        .purchase-product {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .purchase-product:last-child {
+            border-bottom: none;
+        }
+        
+        .purchase-product__icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .purchase-product__info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .purchase-product__name {
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: 4px;
+        }
+        
+        .purchase-product__meta {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .purchase-product__actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .btn--download {
+            background: var(--blue-600);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        
+        .btn--download:hover {
+            background: var(--blue-500);
+            transform: translateY(-1px);
+        }
+        
+        .btn--regenerate {
+            background: transparent;
+            color: var(--gold);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gold);
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all var(--transition-base);
+        }
+        
+        .btn--regenerate:hover {
+            background: rgba(201, 168, 76, 0.1);
+        }
+        
+        .download-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+        
+        .download-status--active {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+        
+        .download-status--expired {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+        }
+        
+        .download-status--warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+        
+        .purchase-total {
+            text-align: right;
+            font-weight: 600;
+            color: var(--text-white);
+            padding-top: 12px;
+            margin-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .empty-purchases {
+            text-align: center;
+            padding: 64px 20px;
+        }
+        
+        .empty-purchases__icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .loading-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="container header__inner">
+            <a href="index.html" class="logo">
+                <span class="logo__icon">⚡</span>
+                <span class="logo__text">Yeahvin</span>
+            </a>
+            
+            <nav class="nav" id="nav">
+                <ul class="nav__list">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li><a href="boutique.html" class="nav__link">Boutique</a></li>
+                    <li><a href="panier.html" class="nav__link nav__link--cart">
+                        Panier
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a></li>
+                    <li><a href="compte.html" class="nav__link">Compte</a></li>
+                </ul>
+            </nav>
+            
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="section">
+            <div class="container">
+                <div class="section__header">
+                    <h1 class="section__title">Mes Achats</h1>
+                    <p class="section__subtitle">Retrouvez tous vos produits digitaux et liens de téléchargement</p>
+                </div>
+
+                <!-- Non connecté -->
+                <div id="notLoggedIn" style="display:none;">
+                    <div class="empty-purchases">
+                        <div class="empty-purchases__icon">🔒</div>
+                        <h3>Connectez-vous pour voir vos achats</h3>
+                        <p>Vous devez être connecté pour accéder à votre espace client.</p>
+                        <a href="compte.html" class="btn btn--primary" style="margin-top:16px;">Se connecter</a>
+                    </div>
+                </div>
+
+                <!-- Loader -->
+                <div id="purchasesLoader">
+                    <div class="purchase-card" style="opacity:0.5;">
+                        <div class="purchase-card__header">
+                            <div>
+                                <div class="loading-skeleton loading-skeleton--text" style="width:200px;"></div>
+                                <div class="loading-skeleton loading-skeleton--text" style="width:120px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="purchase-card" style="opacity:0.5; margin-top:16px;">
+                        <div class="purchase-card__header">
+                            <div>
+                                <div class="loading-skeleton loading-skeleton--text" style="width:180px;"></div>
+                                <div class="loading-skeleton loading-skeleton--text" style="width:100px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liste des achats -->
+                <div class="purchases-list" id="purchasesList" style="display:none;"></div>
+
+                <!-- Aucun achat -->
+                <div id="noPurchases" style="display:none;">
+                    <div class="empty-purchases">
+                        <div class="empty-purchases__icon">📚</div>
+                        <h3>Vous n'avez pas encore d'achats</h3>
+                        <p>Découvrez nos formations et produits digitaux !</p>
+                        <a href="boutique.html" class="btn btn--primary" style="margin-top:16px;">Explorer la boutique</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__bottom">
+                <p>&copy; 2026 Yeahvin. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // ============================================
+        // YEAHVIN - Espace Client (Mes Achats)
+        // ============================================
+        (function() {
+            'use strict';
+            const Y = window.Yeahvin;
+
+            const notLoggedIn = document.getElementById('notLoggedIn');
+            const purchasesLoader = document.getElementById('purchasesLoader');
+            const purchasesList = document.getElementById('purchasesList');
+            const noPurchases = document.getElementById('noPurchases');
+
+            // Vérifier authentification
+            function checkAuth() {
+                if (!Y.state.auth || !Y.state.auth.token) {
+                    if (notLoggedIn) notLoggedIn.style.display = 'block';
+                    if (purchasesLoader) purchasesLoader.style.display = 'none';
+                    return false;
+                }
+                if (notLoggedIn) notLoggedIn.style.display = 'none';
+                return true;
+            }
+
+            // Charger les achats
+            async function loadPurchases() {
+                if (!checkAuth()) return;
+
+                try {
+                    const data = await Y.apiFetch('/api/client/purchases');
+                    
+                    if (purchasesLoader) purchasesLoader.style.display = 'none';
+
+                    if (!data.purchases || data.purchases.length === 0) {
+                        if (noPurchases) noPurchases.style.display = 'block';
+                        return;
+                    }
+
+                    if (purchasesList) {
+                        purchasesList.style.display = 'flex';
+                        renderPurchases(data.purchases);
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement achats:', error);
+                    if (purchasesLoader) purchasesLoader.style.display = 'none';
+                    Y.showToast('Erreur lors du chargement de vos achats', 'error');
+                }
+            }
+
+            // Afficher les achats
+            function renderPurchases(purchases) {
+                if (!purchasesList) return;
+                purchasesList.innerHTML = '';
+
+                purchases.forEach(purchase => {
+                    const card = document.createElement('div');
+                    card.className = 'purchase-card';
+                    
+                    const dateStr = new Date(purchase.purchaseDate).toLocaleDateString('fr-FR', {
+                        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    card.innerHTML = `
+                        <div class="purchase-card__header">
+                            <div>
+                                <div class="purchase-card__order">Commande #${purchase.orderNumber}</div>
+                                <div class="purchase-card__date">${dateStr}</div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--text-white);font-weight:600;">${Y.formatPrice(purchase.totalAmount)}</span>
+                                <span class="purchase-card__toggle">▼</span>
+                            </div>
+                        </div>
+                        <div class="purchase-card__body">
+                            ${purchase.products.map(prod => `
+                                <div class="purchase-product">
+                                    <div class="purchase-product__icon">${prod.type === 'digital' ? '💻' : '📦'}</div>
+                                    <div class="purchase-product__info">
+                                        <div class="purchase-product__name">${prod.productName}</div>
+                                        <div class="purchase-product__meta">
+                                            ${prod.type === 'digital' ? 'Produit digital' : 'Produit physique'} • ${Y.formatPrice(prod.price)}
+                                        </div>
+                                    </div>
+                                    <div class="purchase-product__actions">
+                                        ${prod.type === 'digital' ? renderDigitalActions(prod) : '<span style="font-size:12px;color:var(--text-muted);">Livraison en cours</span>'}
+                                    </div>
+                                </div>
+                            `).join('')}
+                            <div class="purchase-total">Total : ${Y.formatPrice(purchase.totalAmount)}</div>
+                        </div>
+                    `;
+
+                    // Toggle déplier/replier
+                    const header = card.querySelector('.purchase-card__header');
+                    header.addEventListener('click', function() {
+                        card.classList.toggle('purchase-card--open');
+                    });
+
+                    // Attacher les événements aux boutons
+                    attachActionEvents(card, purchase);
+
+                    purchasesList.appendChild(card);
+                });
+            }
+
+            function renderDigitalActions(prod) {
+                if (!prod.downloadUrl) {
+                    return '<span style="font-size:12px;color:var(--text-muted);">En attente</span>';
+                }
+                return `
+                    <a href="${Y.API_BASE}${prod.downloadUrl}" class="btn--download" target="_blank" data-product-id="${prod.productId}">
+                        📥 Télécharger
+                    </a>
+                    <button class="btn--regenerate regenerate-btn" data-order-id="${prod.orderId || ''}" data-product-id="${prod.productId}" style="display:none;">
+                        🔄 Régénérer
+                    </button>
+                `;
+            }
+
+            function attachActionEvents(card, purchase) {
+                // Boutons téléchargement
+                card.querySelectorAll('.btn--download').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        const productId = this.getAttribute('data-product-id');
+                        Y.showToast('Téléchargement en cours...');
+                        
+                        // Vérifier après 3 secondes si le téléchargement a fonctionné
+                        setTimeout(async () => {
+                            try {
+                                const detail = await Y.apiFetch(`/api/client/purchase/${purchase.orderNumber}`);
+                                const prod = detail.products.find(p => p.productId === productId);
+                                if (prod && prod.downloadStatus) {
+                                    updateProductStatus(card, productId, prod.downloadStatus);
+                                }
+                            } catch (err) {
+                                console.error('Erreur vérification statut:', err);
+                            }
+                        }, 3000);
+                    });
+                });
+
+                // Boutons régénération
+                card.querySelectorAll('.regenerate-btn').forEach(btn => {
+                    btn.addEventListener('click', async function() {
+                        const productId = this.getAttribute('data-product-id');
+                        const orderId = this.getAttribute('data-order-id');
+                        
+                        try {
+                            Y.showToast('Régénération du lien...');
+                            const data = await Y.apiFetch('/api/download/regenerate', {
+                                method: 'POST',
+                                body: JSON.stringify({ orderId, productId })
+                            });
+                            
+                            Y.showToast('Nouveau lien généré !');
+                            // Recharger les achats
+                            setTimeout(() => loadPurchases(), 1000);
+                        } catch (error) {
+                            Y.showToast(error.message || 'Erreur lors de la régénération', 'error');
+                        }
+                    });
+                });
+            }
+
+            function updateProductStatus(card, productId, status) {
+                const productDiv = card.querySelector(`[data-product-id="${productId}"]`).closest('.purchase-product');
+                if (!productDiv) return;
+
+                const actionsDiv = productDiv.querySelector('.purchase-product__actions');
+                const metaDiv = productDiv.querySelector('.purchase-product__meta');
+                
+                let statusHtml = '';
+                if (status.isExpired) {
+                    statusHtml = '<span class="download-status download-status--expired">⏰ Expiré</span>';
+                    // Afficher le bouton régénérer
+                    const regenerateBtn = card.querySelector(`.regenerate-btn[data-product-id="${productId}"]`);
+                    if (regenerateBtn) regenerateBtn.style.display = 'inline-flex';
+                } else if (status.downloadsRemaining <= 2) {
+                    statusHtml = `<span class="download-status download-status--warning">⚠️ ${status.downloadsRemaining} téléchargement(s) restant(s)</span>`;
+                } else {
+                    statusHtml = `<span class="download-status download-status--active">✅ ${status.downloadsRemaining} restants</span>`;
+                }
+                
+                if (metaDiv) metaDiv.innerHTML += statusHtml;
+            }
+
+            // Init
+            function init() {
+                if (!document.getElementById('purchasesList') && !document.getElementById('purchasesLoader')) return;
+                loadPurchases();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
