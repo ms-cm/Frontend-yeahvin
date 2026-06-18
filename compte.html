@@ -43,12 +43,16 @@
         .profile-detail-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
         .profile-detail-row span:first-child { color: var(--text-muted); }
         .profile-detail-row span:last-child { color: var(--text-primary); font-weight: 500; }
+        @media (max-width: 480px) {
+            .profile-detail-row { flex-wrap: wrap; gap: 4px; }
+            .social-btn { padding: 13px 16px; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
     <header class="header" id="header">
         <div class="container header__inner">
-            <a href="index.html" class="logo"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span></a>
+            <a href="index.html" class="logo"><img src="assets/logo.png" alt="Yeahvin" class="logo__img"></a>
             <nav class="nav" id="nav">
                 <ul class="nav__list">
                     <li><a href="index.html" class="nav__link">Accueil</a></li>
@@ -128,7 +132,7 @@
     <footer class="footer">
         <div class="container">
             <div class="footer__grid">
-                <div class="footer__brand"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span><p class="footer__tagline">Produits digitaux & physiques pour geeks passionnés.</p></div>
+                <div class="footer__brand"><img src="assets/logo.png" alt="Yeahvin" class="logo__img"><p class="footer__tagline">Produits digitaux & physiques pour geeks passionnés.</p></div>
                 <div class="footer__links"><h4>Navigation</h4><ul><li><a href="index.html">Accueil</a></li><li><a href="boutique.html">Boutique</a></li><li><a href="panier.html">Panier</a></li><li><a href="compte.html">Compte</a></li></ul></div>
                 <div class="footer__contact"><h4>Contact</h4><p>WhatsApp : <a href="https://wa.me/22377555575">+223 77 55 55 75</a></p></div>
             </div>
@@ -140,4 +144,4 @@
     <script src="js/main.js"></script>
     <script src="js/compte.js"></script>
 </body>
-</html>
+        </html>
