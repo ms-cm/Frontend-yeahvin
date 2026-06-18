@@ -36,6 +36,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
             padding: 20px 24px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
@@ -120,7 +122,7 @@
         }
         
         .btn--download {
-            background: var(--blue-600);
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
             color: white;
             padding: 8px 16px;
             border-radius: var(--radius-sm);
@@ -128,7 +130,8 @@
             cursor: pointer;
             font-family: var(--font-body);
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
             transition: all var(--transition-base);
             display: inline-flex;
             align-items: center;
@@ -137,12 +140,12 @@
         }
         
         .btn--download:hover {
-            background: var(--blue-500);
             transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59,130,246,0.45);
         }
         
         .btn--regenerate {
-            background: transparent;
+            background: rgba(201, 168, 76, 0.08);
             color: var(--gold);
             padding: 8px 16px;
             border-radius: var(--radius-sm);
@@ -150,12 +153,14 @@
             cursor: pointer;
             font-family: var(--font-body);
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             transition: all var(--transition-base);
         }
         
         .btn--regenerate:hover {
-            background: rgba(201, 168, 76, 0.1);
+            background: rgba(201, 168, 76, 0.18);
+            box-shadow: 0 4px 12px rgba(201,168,76,0.25);
+            transform: translateY(-1px);
         }
         
         .download-status {
@@ -203,6 +208,12 @@
         
         .loading-pulse {
             animation: pulse 2s ease-in-out infinite;
+        }
+        @media (max-width: 480px) {
+            .purchase-card__header { padding: 16px; }
+            .purchase-card__body { padding: 16px; }
+            .purchase-product { flex-wrap: wrap; }
+            .purchase-product__actions { width: 100%; justify-content: flex-end; }
         }
     </style>
 </head>
