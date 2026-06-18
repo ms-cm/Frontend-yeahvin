@@ -40,7 +40,24 @@
                         <button class="filter-btn" data-category="scripts">🛠️ Scripts</button>
                         <button class="filter-btn" data-category="goodies">👕 Goodies</button>
                     </div>
-                    <div class="filter-sort"><select id="sortSelect" class="input"><option value="-createdAt">Plus récents</option><option value="price">Prix croissant</option><option value="-price">Prix décroissant</option><option value="name">Nom A-Z</option></select></div>
+                    <div class="filter-sort custom-select" id="sortSelectWrapper">
+                        <button type="button" class="custom-select__trigger" id="sortSelectTrigger" aria-haspopup="listbox">
+                            <span id="sortSelectLabel">Plus récents</span>
+                            <span class="custom-select__arrow">▾</span>
+                        </button>
+                        <ul class="custom-select__list" id="sortSelectList" role="listbox">
+                            <li class="custom-select__option custom-select__option--active" data-value="-createdAt" role="option">Plus récents</li>
+                            <li class="custom-select__option" data-value="price" role="option">Prix croissant</li>
+                            <li class="custom-select__option" data-value="-price" role="option">Prix décroissant</li>
+                            <li class="custom-select__option" data-value="name" role="option">Nom A-Z</li>
+                        </ul>
+                        <select id="sortSelect" class="input" style="display:none;" tabindex="-1" aria-hidden="true">
+                            <option value="-createdAt">Plus récents</option>
+                            <option value="price">Prix croissant</option>
+                            <option value="-price">Prix décroissant</option>
+                            <option value="name">Nom A-Z</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="products-grid" id="allProducts"><div class="loading-skeleton"></div><div class="loading-skeleton"></div><div class="loading-skeleton"></div><div class="loading-skeleton"></div></div>
                 <div class="pagination" id="pagination"></div>
@@ -61,5 +78,37 @@
 
     <script src="js/main.js"></script>
     <script src="js/boutique.js"></script>
+    <script>
+        (function () {
+            var wrapper = document.getElementById('sortSelectWrapper');
+            var trigger = document.getElementById('sortSelectTrigger');
+            var label = document.getElementById('sortSelectLabel');
+            var list = document.getElementById('sortSelectList');
+            var select = document.getElementById('sortSelect');
+            if (!wrapper || !trigger || !select) return;
+
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                wrapper.classList.toggle('is-open');
+            });
+
+            Array.prototype.forEach.call(list.querySelectorAll('.custom-select__option'), function (opt) {
+                opt.addEventListener('click', function () {
+                    select.value = opt.getAttribute('data-value');
+                    label.textContent = opt.textContent;
+                    Array.prototype.forEach.call(list.querySelectorAll('.custom-select__option'), function (o) {
+                        o.classList.remove('custom-select__option--active');
+                    });
+                    opt.classList.add('custom-select__option--active');
+                    wrapper.classList.remove('is-open');
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!wrapper.contains(e.target)) wrapper.classList.remove('is-open');
+            });
+        })();
+    </script>
 </body>
 </html>
