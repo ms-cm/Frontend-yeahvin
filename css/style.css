@@ -273,6 +273,34 @@ button { font-family: inherit; }
 
 .filter-sort select { padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 14px; font-family: var(--font-body); cursor: pointer; min-width: 160px; }
 
+/* Menu déroulant personnalisé (remplace le <select> natif pour le tri) */
+.custom-select { position: relative; }
+.custom-select__trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    min-width: 180px; padding: 10px 16px;
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm); color: var(--text-primary);
+    font-family: var(--font-body); font-size: 14px; cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+.custom-select__trigger:hover { border-color: var(--blue-400); }
+.custom-select__arrow { color: var(--text-muted); font-size: 12px; transition: transform var(--transition-fast); }
+.custom-select.is-open .custom-select__arrow { transform: rotate(180deg); }
+.custom-select.is-open .custom-select__trigger { border-color: var(--blue-500); }
+
+.custom-select__list {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 50;
+    background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+    padding: 6px; max-height: 260px; overflow-y: auto;
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+.custom-select.is-open .custom-select__list { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.custom-select__option { padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; color: var(--text-secondary); cursor: pointer; transition: background var(--transition-fast), color var(--transition-fast); }
+.custom-select__option:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.custom-select__option--active { background: rgba(59,130,246,0.12); color: var(--blue-400); font-weight: 600; }
+
 /* ============================================
    COMPTE / AUTHENTIFICATION
    ============================================ */
@@ -482,7 +510,7 @@ button { font-family: inherit; }
     .cart-summary { position: static; }
 
     .shop-filters { flex-direction: column; align-items: stretch; }
-    .filter-search, .filter-sort select { width: 100%; }
+    .filter-search, .filter-sort select, .custom-select, .custom-select__trigger { width: 100%; }
 
     .auth-form, .account-profile { padding: 28px 22px; }
 }
