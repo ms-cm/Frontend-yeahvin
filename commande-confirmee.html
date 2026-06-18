@@ -23,14 +23,18 @@
         .download-link-card__icon { font-size: 32px; }
         .download-link-card__info { flex: 1; }
         .download-link-card__name { font-weight: 600; color: var(--text-white); }
-        .download-link-card__btn { background: var(--success); color: white; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; font-size: 13px; font-weight: 500; }
-        .download-link-card__btn:hover { opacity: 0.9; }
+        .download-link-card__btn { background: var(--success); color: white; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; font-size: 13px; font-weight: 600; box-shadow: 0 4px 12px rgba(16,185,129,0.3); transition: all var(--transition-base); display: inline-flex; align-items: center; }
+        .download-link-card__btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(16,185,129,0.45); opacity: 1; }
+        @media (max-width: 480px) {
+            .order-status { padding: 40px 16px; }
+            .download-link-card { flex-wrap: wrap; }
+        }
     </style>
 </head>
 <body>
     <header class="header" id="header">
         <div class="container header__inner">
-            <a href="index.html" class="logo"><span class="logo__icon">⚡</span><span class="logo__text">Yeahvin</span></a>
+            <a href="index.html" class="logo"><img src="assets/logo.png" alt="Yeahvin" class="logo__img"></a>
             <nav class="nav" id="nav">
                 <ul class="nav__list">
                     <li><a href="index.html" class="nav__link">Accueil</a></li>
