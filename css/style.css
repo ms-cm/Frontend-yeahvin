@@ -226,11 +226,24 @@ button { font-family: inherit; }
 .product-card__btn:hover { background: linear-gradient(135deg, var(--blue-400), var(--blue-600)); box-shadow: 0 6px 16px rgba(59,130,246,0.5); transform: scale(1.08); }
 .product-card__btn:active { transform: scale(0.95); }
 
-.loading-skeleton { background: var(--bg-card); border-radius: var(--radius-lg); aspect-ratio: 1/1; animation: shimmer 1.5s ease-in-out infinite; background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%); background-size: 200% 100%; }
+/* Skeletons améliorés — shimmer réaliste + pulse */
+.loading-skeleton {
+    border-radius: var(--radius-lg); position: relative; overflow: hidden;
+    background: var(--bg-card); aspect-ratio: 1/1;
+    animation: skeletonPulse 2s ease-in-out infinite;
+}
+.loading-skeleton::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 60%, transparent 100%);
+    background-size: 300% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+}
 .loading-skeleton--large { aspect-ratio: 16/9; }
-.loading-skeleton--text { height: 16px; margin-bottom: 12px; border-radius: 4px; }
+.loading-skeleton--text { height: 14px; margin-bottom: 10px; border-radius: 6px; aspect-ratio: unset; }
+.loading-skeleton--text:last-child { width: 60%; }
 
-@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+@keyframes skeletonPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
 
 /* ============================================
    CATEGORIES
@@ -535,3 +548,75 @@ button { font-family: inherit; }
     }
     * { transition-duration: 0.01ms !important; }
 }
+
+/* ============================================
+   TÉMOIGNAGES — SLIDER HORIZONTAL
+   ============================================ */
+
+.testimonials-wrapper { position: relative; }
+.testimonials-slider {
+    display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px;
+}
+.testimonials-slider::-webkit-scrollbar { display: none; }
+
+.testimonial-card {
+    flex: 0 0 300px; scroll-snap-align: start;
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg); padding: 24px;
+    transition: border-color var(--transition-base), transform var(--transition-base);
+}
+.testimonial-card:hover { border-color: var(--blue-500); transform: translateY(-3px); }
+.testimonial-card__header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.testimonial-card__avatar {
+    width: 48px; height: 48px; border-radius: 50%; font-size: 26px;
+    background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; border: 2px solid var(--border-light);
+}
+.testimonial-card__name { font-weight: 600; color: var(--text-white); font-size: 15px; }
+.testimonial-card__stars { color: var(--gold); font-size: 13px; margin-top: 2px; }
+.testimonial-card__text { color: var(--text-secondary); font-size: 14px; line-height: 1.7; font-style: italic; }
+
+.testimonials-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+.testimonials-dot {
+    width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--border-light); transition: all var(--transition-base); padding: 0;
+}
+.testimonials-dot--active { width: 24px; border-radius: 4px; background: var(--blue-500); }
+
+@media (max-width: 480px) {
+    .testimonial-card { flex: 0 0 calc(100vw - 52px); }
+}
+
+/* ============================================
+   MICRO-INTERACTIONS
+   ============================================ */
+
+/* Effet vague (ripple) au clic sur les boutons */
+.btn { position: relative; overflow: hidden; }
+.ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transform: scale(0); animation: rippleAnim 0.5s linear;
+    pointer-events: none;
+}
+@keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+/* Rebond sur ajout au panier */
+@keyframes bounceCart { 0%,100% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.88); } 80% { transform: scale(1.1); } }
+.product-card__btn--bounce { animation: bounceCart 0.5s cubic-bezier(0.36,0.07,0.19,0.97); }
+
+/* Badge panier qui pulse à chaque ajout */
+@keyframes badgePop { 0% { transform: scale(1); } 40% { transform: scale(1.5); } 70% { transform: scale(0.85); } 100% { transform: scale(1); } }
+.cart-badge--pop { animation: badgePop 0.4s cubic-bezier(0.36,0.07,0.19,0.97); }
+
+/* Transition entre pages */
+.page-transition-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg-primary); pointer-events: none;
+    opacity: 0; transition: opacity 0.25s ease;
+}
+.page-transition-overlay--visible { opacity: 1; }
+
+@keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+body { animation: pageIn 0.35s ease-out both; }
