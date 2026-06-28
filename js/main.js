@@ -129,3 +129,68 @@
     };
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
 })();
+/* ============================================================
+   MICRO-INTERACTIONS & TRANSITIONS — ajout à main.js
+   ============================================================ */
+(function() {
+
+    /* 1. EFFET RIPPLE sur tous les .btn au clic */
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn, .product-card__btn, .btn--download, .btn--regenerate');
+        if (!btn) return;
+        var r = btn.getBoundingClientRect();
+        var size = Math.max(r.width, r.height) * 2;
+        var ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + (e.clientX - r.left - size/2) + 'px;top:' + (e.clientY - r.top - size/2) + 'px;';
+        btn.appendChild(ripple);
+        setTimeout(function() { ripple.remove(); }, 600);
+    });
+
+    /* 2. REBOND + ANIMATION BADGE sur ajout au panier */
+    var _origSaveCart = window.Yeahvin && window.Yeahvin.saveCart;
+    if (window.Yeahvin) {
+        window.Yeahvin.saveCart = function() {
+            // rebond sur le bouton qui a déclenché l'ajout
+            var lastBtn = document.activeElement;
+            if (lastBtn && lastBtn.classList.contains('product-card__btn')) {
+                lastBtn.classList.remove('product-card__btn--bounce');
+                void lastBtn.offsetWidth; // force reflow
+                lastBtn.classList.add('product-card__btn--bounce');
+                lastBtn.addEventListener('animationend', function() {
+                    lastBtn.classList.remove('product-card__btn--bounce');
+                }, { once: true });
+            }
+            // pop du badge
+            var badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.classList.remove('cart-badge--pop');
+                void badge.offsetWidth;
+                badge.classList.add('cart-badge--pop');
+                badge.addEventListener('animationend', function() {
+                    badge.classList.remove('cart-badge--pop');
+                }, { once: true });
+            }
+            if (_origSaveCart) _origSaveCart.call(window.Yeahvin);
+        };
+    }
+
+    /* 3. TRANSITION ENTRE PAGES — overlay fade */
+    var overlay = document.createElement('div');
+    overlay.className = 'page-transition-overlay';
+    document.body.appendChild(overlay);
+
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href]');
+        if (!link) return;
+        var href = link.getAttribute('href');
+        // Ignorer les ancres, mailto, tel, target=_blank, JS
+        if (!href || href.startsWith('#') || href.startsWith('mailto') || href.startsWith('tel') || href.startsWith('javascript') || link.target === '_blank') return;
+        // Ignorer Ctrl+clic / Cmd+clic
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+        e.preventDefault();
+        overlay.classList.add('page-transition-overlay--visible');
+        setTimeout(function() { window.location.href = href; }, 260);
+    });
+
+})();
